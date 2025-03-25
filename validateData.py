@@ -19,10 +19,16 @@ def compare_csv_files(file1, file2):
         print("The data in both files is the same.")
         return True
     else:
-        print("The data in the files is different.")
+        print("The data is not the same, here is the difference:")
+        for column in df1.columns:
+            diff = df1[column] != df2[column]
+            diffRows= df1[diff]
+
         return False
+    print(f"Differing rows for column '{column}':")
+    print(diffRows)
 
 # Example usage
-file1 = 'Customers 20250320(Data).csv'
-file2 = 'ATW_KD Customer Import_03_20_2025_KD(LoadFilev3 (2)).csv'
+file1 = 'testfile1.csv'
+file2 = 'testfile2.csv'
 compare_csv_files(file1, file2)
