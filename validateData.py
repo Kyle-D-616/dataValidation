@@ -1,12 +1,27 @@
-﻿import time
+﻿
 import pandas as pd
 
-def compare_csv_files(file1, file2):
-    # Read both CSV files into pandas dataframes
-    df1 = pd.read_csv(file1)
-    df2 = pd.read_csv(file2)
+def read_file(file_path):
+    """Read Excel or CSV file into a DataFrame based on the file extension."""
+    if file_path.lower().endswith('.csv'):
+        return pd.read_csv(file_path)
+    elif file_path.lower().endswith('.xlsx'):
+        return pd.read_excel(file_path, engine='openpyxl')
+    else:
+        print(f"❌ Unsupported file format: {file_path}")
+        return None
 
-    # Strip leading/trailing spaces from the column names
+
+def compare_files(file1, file2):
+    # ✅ Read both files into pandas dataframes
+    df1 = read_file(file1)
+    df2 = read_file(file2)
+
+    if df1 is None or df2 is None:
+        print("\n❌ One or both files could not be read. Please check the file paths.")
+        return
+
+    # ✅ Strip leading/trailing spaces from the column names
     df1.columns = df1.columns.str.strip()
     df2.columns = df2.columns.str.strip()
 
@@ -16,7 +31,7 @@ def compare_csv_files(file1, file2):
     # 🚫 If no common columns found, exit
     if not common_fields:
         print("\n❌ No common fields found between the two files.")
-        print("Make sure both CSV files have at least one matching column name.")
+        print("Make sure both files have at least one matching column name.")
         return
 
     # ✅ Display common fields and let the user choose
@@ -80,26 +95,25 @@ def compare_csv_files(file1, file2):
 
     # ✅ Print the differences
     if diff:
+        print("\n🔍 Differences found:")
         for line in diff:
-            print("differences found:")
             print(line)
     else:
-        print("The data in both files is the same.")
-        
+        print("\n✅ The data in both files is the same.")
+
     return diff
 
 
 # ✅ Ask the user for file paths dynamically and handle quotes
-print("Hello human O_o ...")
-time.sleep(2)
-print("i will compare two csv files for you.") 
-print("Press ctrl + C to exit at any time.")
-print("If your ready to begin please, " )
-file1 = input("Enter the full file path for the first CSV file: ").strip().strip('"')
-file2 = input("Enter the full file path for the second CSV file: ").strip().strip('"')
+print("\n📊 Welcome! This program will compare two Excel or CSV files and highlight any differences.")
+print("Press Ctrl + C at any time to exit.")
+print("\n📄 Please enter the full file paths of the files you'd like to compare.")
 
-# Compare the files
-compare_csv_files(file1, file2)
+file1 = input("\n📄 Enter the full file path for the first file: ").strip().strip('"')
+file2 = input("📄 Enter the full file path for the second file: ").strip().strip('"')
+
+# ✅ Compare the files
+compare_files(file1, file2)
 
 # ✅ Keep the window open using input
 input("\nPress Enter to exit...")
